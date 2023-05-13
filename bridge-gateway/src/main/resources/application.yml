@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: api-gateway-service
+
+  cloud:
+    gateway:
+      routes:
+        - id: userservice
+          uri: http://localhost:8081/
+          predicates:
+            - Path=/api/auths/**
+
+        - id: exerciseservice
+          uri: http://localhost:8083/
+          predicates:
+            - Path=/api/exercises/**
+
+        - id: mealservice
+          uri: http://localhost:8084/
+          predicates:
+            - Path=/api/meal/**
+
+        - id: calorieservice
+          uri: http://localhost:8085/
+          predicates:
+            - Path=/api/calories/**
