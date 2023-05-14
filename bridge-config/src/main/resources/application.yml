@@ -1,0 +1,51 @@
+server:
+  port: 8088
+
+spring:
+  application:
+    name: bridge-config-service
+
+  cloud:
+    config:
+      server:
+        git:
+          uri: git@github.com:Advanced-Web-Programming-Bridge/Bridge_Config.git
+          default-label: main
+          ignore-local-ssh-settings: true
+          private-key: |
+            -----BEGIN EC PRIVATE KEY-----
+            MHcCAQEEIPzbTu8/8rxJDmfkLx6sLrPhgXA+A78IffQCcEpYHCoZoAoGCCqGSM49
+            AwEHoUQDQgAEXLfQ9YzppT9OhHCEh78uRdCubDjcEASIU5c8XLzz+h8kfYEPYoPu
+            Fsw+ikmlMpR2aAMouhqvjitzqbajflKPpw==
+            -----END EC PRIVATE KEY-----
+
+    host-key: AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEmKSENjQEezOmxkZMy7opKgwFB9nkt5YRrYMjNuG5N87uRgg6CLrbo5wAdT/y6v0mKV0U2w0WZ2YB/++Tpockg=
+    host-key-algorithm: ecdsa-sha2-nistp256
+
+    # ?? ?? ??? ??
+    encrypt:
+      enabled: false
+
+encrypt:
+  key: key-brian
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+  endpoint:
+    shutdown:
+      enabled: true
+
+eureka:
+  instance:
+    preferIpAddress: true
+    lease-renewal-interval-in-seconds: 30
+
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/

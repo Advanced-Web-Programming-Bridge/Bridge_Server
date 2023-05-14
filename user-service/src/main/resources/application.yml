@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: userservice
+    name: user-service
 
   jpa:
     hibernate:

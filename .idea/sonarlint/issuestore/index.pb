@@ -7,8 +7,6 @@ D
 Seureka-server/src/main/java/gachon/bridge/eurekaserver/EurekaServerApplication.java,c/c/ccff04fcc793df88a59b83bb9c50002da3526f66
 J
 eureka-server/build.gradle,9/2/926f3c0072d8ffed034ab5418b00a4ab803f7479
-€
-Pbridge-gateway/src/main/java/gachon/bridge/gateway/BridgeGatewayApplication.java,6/c/6cd6593589cb36f99eb58501b1fd9542469879c4
 ‘
 aexercise-service/src/test/java/gachon/bridge/exerciseservice/ExerciseServiceApplicationTests.java,4/e/4e5f67a7c6931049796d4eb05d66f0dadc3e375a
 J

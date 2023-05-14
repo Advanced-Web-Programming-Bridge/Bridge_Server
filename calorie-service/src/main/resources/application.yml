@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: calorieservice
+    name: calorie-service
 
   jpa:
     hibernate:

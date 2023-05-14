@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: mealservice
+    name: meal-service
 
   jpa:
     hibernate:
