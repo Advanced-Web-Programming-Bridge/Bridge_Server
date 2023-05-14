@@ -15,7 +15,7 @@ spring:
   cloud:
     config:
       name: bridge
-      profile: server
+      profile: test
 
 eureka:
   instance:

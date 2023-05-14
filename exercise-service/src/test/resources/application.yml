@@ -1,9 +1,9 @@
 server:
-  port: 8084
+  port: 8083
 
 spring:
   application:
-    name: mealservice
+    name: exerciseservice
 
   jpa:
     hibernate:
@@ -15,7 +15,7 @@ spring:
   cloud:
     config:
       name: bridge
-      profile: server
+      profile: test
 
 eureka:
   instance:

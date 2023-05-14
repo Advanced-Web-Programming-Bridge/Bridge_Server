@@ -5,11 +5,17 @@ spring:
   application:
     name: userservice
 
-  datasource:
-    url: jdbc:h2:tcp://localhost/~/test
-    username: sa
-    password: 1234
-    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+
+  config:
+    import: "optional:configserver:http://localhost:8088/"
+
+  cloud:
+    config:
+      name: bridge
+      profile: server
 
 eureka:
   instance:
