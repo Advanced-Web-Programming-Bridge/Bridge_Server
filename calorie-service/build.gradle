@@ -31,10 +31,14 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
+	// Spring Cloud Config
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.cloud:spring-cloud-starter-config'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+	// 질의문 보기 위해
+	implementation("com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.7")
 
 	runtimeOnly 'mysql:mysql-connector-java:8.0.32'
 	testRuntimeOnly 'com.h2database:h2'

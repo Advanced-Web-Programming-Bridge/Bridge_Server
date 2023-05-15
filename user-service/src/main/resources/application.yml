@@ -9,6 +9,10 @@ spring:
     hibernate:
       ddl-auto: create
 
+    properties:
+      hibernate:
+        format_sql: true
+
   config:
     import: "optional:configserver:http://localhost:8088/"
 
@@ -16,6 +20,10 @@ spring:
     config:
       name: bridge
       profile: server
+
+logging.level:
+  org.hibernate.SQL: debug
+  p6spy: info
 
 eureka:
   instance:
