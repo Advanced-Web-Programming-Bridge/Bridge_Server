@@ -28,10 +28,10 @@ public class UserController {
         BaseResponse response;
 
         try {
-            UserDto user = new UserDto(userService.getUserByUserId(id));
+            UserDto data = userService.getUserByUserId(id);
             log.info("{}의 아이디를 가진 유저를 찾았습니다", id);
 
-            response = new BaseResponse(user);
+            response = new BaseResponse(data);
 
         } catch (BaseException e) {
             log.error("{}의 아이디를 가진 유저를 찾는 데 실패하였습니다", id);

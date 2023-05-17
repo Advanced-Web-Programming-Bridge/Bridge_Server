@@ -4,6 +4,7 @@ import gachon.bridge.userservice.base.BaseException;
 import gachon.bridge.userservice.domain.User;
 import gachon.bridge.userservice.dto.LoginRequestDto;
 import gachon.bridge.userservice.dto.LoginResponseDto;
+import gachon.bridge.userservice.dto.UserDto;
 import gachon.bridge.userservice.repository.UserRepository;
 import gachon.bridge.userservice.service.UserService;
 import jakarta.transaction.Transactional;
@@ -35,10 +36,11 @@ class UserServiceApplicationTests {
         userRepository.save(user);
 
         // when
-        User findUser = userService.getUserByUserId("testId");
+        UserDto findUser = userService.getUserByUserId("testId");
 
         // then
-        assertEquals(findUser, user);
+        assertEquals(findUser.getUserId(), user.getUserId());
+        assertEquals(findUser.getEmail(), user.getEmail());
     }
 
     @Test

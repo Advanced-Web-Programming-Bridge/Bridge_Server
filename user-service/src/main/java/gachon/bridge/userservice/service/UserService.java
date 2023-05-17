@@ -5,6 +5,7 @@ import gachon.bridge.userservice.domain.User;
 import gachon.bridge.userservice.dto.LoginRequestDto;
 import gachon.bridge.userservice.dto.LoginResponseDto;
 import gachon.bridge.userservice.dto.Token;
+import gachon.bridge.userservice.dto.UserDto;
 import gachon.bridge.userservice.repository.UserRepository;
 import gachon.bridge.userservice.utils.JwtTokenProvider;
 import jakarta.transaction.Transactional;
@@ -39,7 +40,7 @@ public class UserService {
      * @return user : 해당 id를 가진 User
      * @throws BaseException
      */
-    public User getUserByUserId(String id) throws BaseException {
+    public UserDto getUserByUserId(String id) throws BaseException {
         User user;
 
         try {
@@ -48,7 +49,7 @@ public class UserService {
 
             if (user.getExpired()) new BaseException(INVALID_USER);
 
-            return user;
+            return new UserDto(user);
 
         } catch (BaseException e) {
             log.error(e.getErrorCode().getMessage());
@@ -101,7 +102,6 @@ public class UserService {
             throw e;
         }
     }
-
 
     // Todo: 회원 가입
     // Todo: 비밀번호 변경
