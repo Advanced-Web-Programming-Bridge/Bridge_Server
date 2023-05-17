@@ -37,6 +37,9 @@ dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
+	// Spring Security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
 	// 질의문 보기 위해
 	implementation("com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.7")
 

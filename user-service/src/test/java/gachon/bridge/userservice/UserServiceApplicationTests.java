@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static gachon.bridge.userservice.base.BaseErrorCode.INVALID_USER;
@@ -27,6 +28,13 @@ class UserServiceApplicationTests {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Test
+    @Commit
+    void 데이터_추가용() {
+        User user = new User("testId", "testPw", "test@email.com");
+        userRepository.save(user);
+    }
 
     // --------------- Get user method  ---------------
     @Test

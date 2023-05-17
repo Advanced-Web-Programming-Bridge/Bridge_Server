@@ -42,4 +42,11 @@ public class JwtTokenProvider {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token)
                 .getBody().getExpiration().before(new Date());
     }
+
+    public UUID getUserIdx(String token) {
+        String userIdx = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token)
+                .getBody().get("userIdx", String.class);
+
+        return UUID.fromString(userIdx);
+    }
 }
