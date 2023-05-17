@@ -16,7 +16,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "userIdx")
-    private UUID pk;
+    private UUID userIdx;
 
     @Column(nullable = false, length = 45, unique = true)
     private String userId;
@@ -35,6 +35,8 @@ public class User {
 
     @Column(nullable = false, columnDefinition = "TINYINT(1) DEFAULT 0", name = "status")
     private Boolean expired; // data 삭제 처리 여부
+
+    private String token; // refresh token
 
     public User(String userId, String pw, String email) {
         this.userId = userId;

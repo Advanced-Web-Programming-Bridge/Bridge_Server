@@ -35,3 +35,7 @@ eureka:
     fetchRegistry: true
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
+
+# 실무에서는 .gitignore로 감출 것
+jwt:
+  secret: 41a6ab809e9c21fb62c745a24b27ddcd7080db878ca29c1cf72a84c792f0d1b7
