@@ -2,10 +2,7 @@ package gachon.bridge.userservice.controller;
 
 import gachon.bridge.userservice.base.BaseException;
 import gachon.bridge.userservice.base.BaseResponse;
-import gachon.bridge.userservice.dto.LoginRequestDto;
-import gachon.bridge.userservice.dto.LoginResponseDto;
-import gachon.bridge.userservice.dto.Token;
-import gachon.bridge.userservice.dto.UserDto;
+import gachon.bridge.userservice.dto.*;
 import gachon.bridge.userservice.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,39 +21,31 @@ public class UserController {
     }
 
     @GetMapping("/user/{id}")
-    public BaseResponse<UserDto> getUserInfo(@PathVariable String id) {
-        BaseResponse response;
-
+    public BaseResponse getUserInfo(@PathVariable String id) {
         try {
             UserDto data = userService.getUserByUserId(id);
             log.info("{}의 아이디를 가진 유저를 찾았습니다", id);
 
-            response = new BaseResponse(data);
+            return new BaseResponse<>(data);
 
         } catch (BaseException e) {
             log.error("{}의 아이디를 가진 유저를 찾는 데 실패하였습니다", id);
-            response = new BaseResponse(e);
+            return new BaseResponse<>(e);
         }
-
-        return response;
     }
 
     @PostMapping("/login")
-    public BaseResponse<Token> signIn(@RequestBody LoginRequestDto dto) {
-        BaseResponse response;
-
+    public BaseResponse signIn(@RequestBody LoginRequestDto dto) {
         try {
             LoginResponseDto data = userService.signIn(dto);
             log.info("{}의 아이디를 가진 유저가 로그인에 성공하였습니다", dto.getId());
 
-            response = new BaseResponse(data);
+            return new BaseResponse<>(data);
 
         } catch (BaseException e) {
             log.error("{}의 아이디를 가진 유저가 로그인 하는 데 실패하였습니다", dto.getId());
-            response = new BaseResponse(e);
+            return new BaseResponse<>(e);
         }
-
-        return response;
     }
 
 }

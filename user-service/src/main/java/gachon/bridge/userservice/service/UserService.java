@@ -2,18 +2,16 @@ package gachon.bridge.userservice.service;
 
 import gachon.bridge.userservice.base.BaseException;
 import gachon.bridge.userservice.domain.User;
-import gachon.bridge.userservice.dto.LoginRequestDto;
-import gachon.bridge.userservice.dto.LoginResponseDto;
-import gachon.bridge.userservice.dto.Token;
-import gachon.bridge.userservice.dto.UserDto;
+import gachon.bridge.userservice.dto.*;
 import gachon.bridge.userservice.repository.UserRepository;
 import gachon.bridge.userservice.utils.JwtTokenProvider;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
 
 import static gachon.bridge.userservice.base.BaseErrorCode.INVALID_PW;
 import static gachon.bridge.userservice.base.BaseErrorCode.INVALID_USER;
@@ -25,7 +23,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     public UserService(UserRepository userRepository, JwtTokenProvider jwtTokenProvider) {
@@ -47,8 +45,6 @@ public class UserService {
             user = userRepository.findByUserId(id)
                     .orElseThrow(() -> new BaseException(INVALID_USER));
 
-            if (user.getExpired()) new BaseException(INVALID_USER);
-
             return new UserDto(user);
 
         } catch (BaseException e) {
@@ -69,12 +65,10 @@ public class UserService {
             User user = userRepository.findByUserId(content.getId())
                     .orElseThrow(() -> new BaseException(INVALID_USER));
 
-            if (user.getExpired()) new BaseException(INVALID_USER);
-
             if (!user.getPw().equals(content.getPw())) throw new BaseException(INVALID_PW);
 
             String accessToken = jwtTokenProvider.createAccessToken(user.getUserIdx());
-            log.info("{}의 아이디를 가진 유저에게 \'{}'\' access token을 발급하였습니다", user.getUserId(), accessToken);
+            log.info("{}의 아이디를 가진 유저에게 '{}' access token을 발급하였습니다", user.getUserId(), accessToken);
 
             String refreshToken;
 
@@ -82,7 +76,7 @@ public class UserService {
                 refreshToken = jwtTokenProvider.createRefreshToken(user.getUserIdx());
                 user.setToken(refreshToken);
 
-                log.info("{}의 아이디를 가진 유저에게 \'{}'\' refresh token을 발급하였습니다", user.getUserId(), refreshToken);
+                log.info("{}의 아이디를 가진 유저에게 '{}' refresh token을 발급하였습니다", user.getUserId(), refreshToken);
 
             } else {
                 refreshToken = user.getToken();
@@ -94,6 +88,8 @@ public class UserService {
                     user.setToken(newRefreshToken);
                 }
             }
+
+            user.setUpdatedAt(new Date());
 
             return new LoginResponseDto(user.getUserIdx(), new Token(accessToken, refreshToken));
 
