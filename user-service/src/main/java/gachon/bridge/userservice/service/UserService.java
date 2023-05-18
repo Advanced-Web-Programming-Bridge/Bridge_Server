@@ -37,43 +37,16 @@ public class UserService {
     /**
      * 해당 id를 가진 User 정보 가져오기
      *
-     * @param id : user id
-     * @return user : 해당 id를 가진 User
-     * @throws BaseException
-     */
-//    public UserDto getUserByUserId(String id) throws BaseException {
-//        User user;
-//
-//        try {
-//            user = userRepository.findByUserId(id)
-//                    .orElseThrow(() -> new BaseException(INVALID_USER));
-//
-//            // 회원 탈퇴를 한 적이 있다면
-//            if (user.getExpired()) throw new BaseException(INVALID_USER);
-//
-//            return new UserDto(user);
-//
-//        } catch (BaseException e) {
-//            log.error(e.getErrorCode().getMessage());
-//            throw e;
-//        }
-//    }
-
-    /**
-     * 해당 id를 가진 User 정보 가져오기
-     *
      * @param id: user index
      * @return user : 해당 id를 가진 User
      * @throws BaseException
      */
     public User getUser(UUID id) throws BaseException {
-        User user;
-
         try {
-            user = userRepository.findById(id)
+            User user = userRepository.findById(id)
                     .orElseThrow(() -> new BaseException(INVALID_USER));
 
-            // 회원 탈퇴를 한 적이 있다면
+            // 회원 탈퇴를 한 적이 있는지 확인
             if (user.getExpired()) throw new BaseException(INVALID_USER);
 
             return user;
@@ -97,35 +70,40 @@ public class UserService {
             User user = userRepository.findByUserId(content.getId())
                     .orElseThrow(() -> new BaseException(INVALID_USER));
 
-            // 회원 탈퇴를 한 적이 있다면
+            // 회원 탈퇴를 한 적이 있는지 확인
             if (user.getExpired()) throw new BaseException(INVALID_USER);
 
+            // DB에 저장된 비밀번호와 일치하는지 확인
             if (!aes256Util.decrypt(user.getPw()).equals(content.getPw()))
                 throw new BaseException(INVALID_PW);
 
+            // Access token 발급
             String accessToken = jwtTokenProvider.createAccessToken(user.getUserIdx());
             log.info("{}의 아이디를 가진 유저에게 '{}' access token을 발급하였습니다", user.getUserId(), accessToken);
 
             String refreshToken;
 
-            if (user.getToken() == null) { // refresh token이 없는 경우
+            if (user.getToken() == null) { // Refresh token이 없는 경우
+                // Refresh token 발급 및 DB에 설정
                 refreshToken = jwtTokenProvider.createRefreshToken(user.getUserIdx());
                 user.setToken(refreshToken);
+                user.setUpdatedAt(new Date());
 
                 log.info("{}의 아이디를 가진 유저에게 '{}' refresh token을 발급하였습니다", user.getUserId(), refreshToken);
 
-            } else {
+            } else { // Refresh token이 있는 경우
                 refreshToken = user.getToken();
 
                 if (jwtTokenProvider.expired(refreshToken)) { // DB에 저장된 refresh token이 만료된 경우
+                    // Refresh token 재발급
                     String newRefreshToken = jwtTokenProvider.createRefreshToken(user.getUserIdx());
                     log.info("{}의 아이디를 가진 유저에게 '{}' refresh token을 재발급하였습니다", user.getUserId(), refreshToken);
 
+                    // DB에 설정
                     user.setToken(newRefreshToken);
+                    user.setUpdatedAt(new Date());
                 }
             }
-
-            user.setUpdatedAt(new Date());
 
             return new LoginResponseDto(user.getUserIdx(), new Token(accessToken, refreshToken));
 
@@ -147,8 +125,6 @@ public class UserService {
      * @throws BaseException
      */
     public AccountDeletionResponseDTO deactivateAccount(String token, AccountDeletionRequestDTO dto) throws BaseException {
-        log.info(dto.toString());
-
         try {
             // 토큰이 발행되었다는 것은 존재하는 유저
             User user = userRepository.findById(dto.getUserIdx())
