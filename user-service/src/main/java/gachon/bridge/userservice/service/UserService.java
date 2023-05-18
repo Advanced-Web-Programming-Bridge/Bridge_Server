@@ -57,24 +57,23 @@ public class UserService {
         }
     }
 
-
     /***
      * 로그인
      *
-     * @param content : user id, pw가 들어있는 dto
+     * @param dto : user id, pw가 들어있는 dto
      * @return user index, token(access token, refresh token)이 들어있는 dto
      * @throws BaseException
      */
-    public LoginResponseDto signIn(LoginRequestDto content) throws BaseException {
+    public LoginResponseDto signIn(LoginRequestDto dto) throws BaseException {
         try {
-            User user = userRepository.findByUserId(content.getId())
+            User user = userRepository.findByUserId(dto.getId())
                     .orElseThrow(() -> new BaseException(INVALID_USER));
 
             // 회원 탈퇴를 한 적이 있는지 확인
             if (user.getExpired()) throw new BaseException(INVALID_USER);
 
             // DB에 저장된 비밀번호와 일치하는지 확인
-            if (!aes256Util.decrypt(user.getPw()).equals(content.getPw()))
+            if (!aes256Util.decrypt(user.getPw()).equals(dto.getPw()))
                 throw new BaseException(INVALID_PW);
 
             // Access token 발급
@@ -113,7 +112,37 @@ public class UserService {
         }
     }
 
-    // Todo: 회원 가입
+    /***
+     *  회원 가입
+     *
+     * @param dto : user id, pw, email이 들어있는 dto
+     * @return user index와 정상적으로 회원 가입이 되었다는 문구가 들어있는 dto
+     * @throws BaseException
+     */
+    public SignUpResponseDto join(SignUpRequestDto dto) throws BaseException {
+        try {
+            // id 길이 확인 (0 < id.length() <= 45)
+            if (dto.getId().length() == 0) throw new BaseException(ID_TOO_SHORT);
+            if (dto.getId().length() > 45) throw new BaseException(ID_TOO_LONG);
+
+            // id 중복 확인
+            if (userRepository.findByUserId(dto.getId()).isPresent())
+                throw new BaseException(EXIST_ID);
+
+            // Todo: 유효한 이메일인지 확인
+
+            // 회원 가입
+            User user = new User(dto.getId(), aes256Util.encrypt(dto.getPw()), dto.getEmail());
+            userRepository.save(user);
+
+            return new SignUpResponseDto(user.getUserIdx());
+
+        } catch (BaseException e) {
+            log.error(e.getErrorCode().getMessage());
+            throw e;
+        }
+    }
+
     // Todo: 비밀번호 변경
 
     /***

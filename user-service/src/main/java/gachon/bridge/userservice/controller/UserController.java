@@ -37,6 +37,20 @@ public class UserController {
         }
     }
 
+    @PostMapping("/join")
+    public BaseResponse join(@RequestBody SignUpRequestDto dto) {
+        try {
+            SignUpResponseDto data = userService.join(dto);
+            log.info("사용자 '{}'가 성공적으로 가입되었습니다.", dto.getId());
+
+            return new BaseResponse<>(data);
+
+        } catch (BaseException e) {
+            log.error("'{}'의 이메일을 가진 유저가 회원 가입 하는 데 실패하였습니다.", dto.getEmail());
+            return new BaseResponse<>(e);
+        }
+    }
+
     @PostMapping("/login")
     public BaseResponse signIn(@RequestBody LoginRequestDto dto) {
         try {
