@@ -7,6 +7,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum BaseErrorCode {
 
+    // 암호화, 복호화 에러
+    ENCRYPTION_ERROR(500, "암호화하는 과정에서 에러가 발생하였습니다."),
+    DECRYPTION_ERROR(500, "복호화하는 과정에서 에러가 발생하였습니다."),
 
     /**
      * 1000 ~ 1500

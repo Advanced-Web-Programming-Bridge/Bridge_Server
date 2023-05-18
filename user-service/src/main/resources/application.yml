@@ -39,3 +39,6 @@ eureka:
 # 실무에서는 .gitignore로 감출 것
 jwt:
   secret: 41a6ab809e9c21fb62c745a24b27ddcd7080db878ca29c1cf72a84c792f0d1b7
+
+encrypt:
+  secretKey: a4e8e1ee2de4844838da81c4d9fe2b8703ffe3e51484e9053e36cc5c3a59ff48
