@@ -3,15 +3,11 @@ server:
 
 spring:
   application:
-    name: calorie-service
+    name: calorieservice
 
   jpa:
     hibernate:
       ddl-auto: create
-
-    properties:
-      hibernate:
-        format_sql: true
 
   config:
     import: "optional:configserver:http://localhost:8088/"
@@ -19,11 +15,7 @@ spring:
   cloud:
     config:
       name: bridge
-      profile: server
-
-logging.level:
-  org.hibernate.SQL: debug
-  p6spy: info
+      profile: test
 
 eureka:
   instance:

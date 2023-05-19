@@ -3,15 +3,11 @@ server:
 
 spring:
   application:
-    name: user-service
+    name: userservice
 
   jpa:
     hibernate:
       ddl-auto: create
-
-    properties:
-      hibernate:
-        format_sql: true
 
   config:
     import: "optional:configserver:http://localhost:8088/"
@@ -19,13 +15,18 @@ spring:
   cloud:
     config:
       name: bridge
-      profile: server
+      profile: test
 
-logging.level:
-  org.hibernate.SQL: debug
-  p6spy: info
+  # 테스트 환경에서는 Spring security 끄기
+  autoconfigure:
+    exclude=org:
+      springframework:
+        boot:
+          autoconfigure:
+            security:
+              servlet:
+                SecurityAutoConfiguration:eureka:
 
-eureka:
   instance:
     preferIpAddress: true
     lease-renewal-interval-in-seconds: 30
