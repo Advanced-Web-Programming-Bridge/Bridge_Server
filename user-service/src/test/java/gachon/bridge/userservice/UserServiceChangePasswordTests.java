@@ -229,4 +229,38 @@ class UserServiceChangePasswordTests {
         fail("올바르지 않은 정보로 비밀번호 변경이 되면 안 됩니다.");
     }
 
+    @Test
+    void 같은_비밀번호로_비밀번호_변경() {
+        // given : 정상적인 데이터를 가지고
+        User user = null;
+        try {
+            user = new User(id, aes256Util.encrypt(pw), email);
+        } catch (Exception e) {
+            fail("비밀번호를 암호화하는데 실패하였습니다.");
+        }
+
+        userRepository.save(user);
+
+        LoginRequestDto request = new LoginRequestDto(id, pw);
+
+        String token = "";
+        try {
+            token = userService.signIn(request).getToken().getAccessToken();
+            token = "Bearer " + token;
+        } catch (Exception e) {
+            fail("로그인하는 과정에서 에러가 발생하였습니다.");
+        }
+
+        ChangePasswordRequestDto dto = new ChangePasswordRequestDto(user.getUserIdx().toString(), pw, pw);
+
+        // when : 비밀번호 변경 요청을 하면
+        try {
+            userService.changePassword(token, dto);
+        } catch (BaseException e) {
+            assertEquals(SAME_PW, e.getErrorCode());
+            return;
+        }
+
+        fail("이전과 같은 비밀번호로 비밀번호를 변경할 수 없습니다.");
+    }
 }

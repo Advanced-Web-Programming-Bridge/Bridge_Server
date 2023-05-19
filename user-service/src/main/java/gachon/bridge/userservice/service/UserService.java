@@ -118,6 +118,10 @@ public class UserService {
 
             checkAuthentication(token, user, dto.getCurrentPw());
 
+            // 이전 비밀번호와 같은 지 확인
+            if (dto.getCurrentPw().equals(dto.getNewPw()))
+                throw new BaseException(BaseErrorCode.SAME_PW);
+
             // 비밀번호 저장
             user.setPw(aes256Util.encrypt(dto.getNewPw()));
             user.setUpdatedAt(new Date());
