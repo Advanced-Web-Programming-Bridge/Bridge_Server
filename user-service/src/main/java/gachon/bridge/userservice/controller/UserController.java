@@ -65,6 +65,20 @@ public class UserController {
         }
     }
 
+    @PatchMapping("/change/pw")
+    public BaseResponse changePassword(@RequestHeader("Authorization") String token, @RequestBody ChangePasswordRequestDto dto) {
+        try {
+            ChangePasswordResponseDto data = userService.changePassword(token, dto);
+            log.info("'{}'의 식별자를 가진 유저가 비밀번호를 변경 하는 데 성공하였습니다", dto.getUserIdx());
+
+            return new BaseResponse<>(data);
+
+        } catch (BaseException e) {
+            log.error("'{}'의 식별자를 가진 유저가 비밀번호를 변경 하는 데 실패하였습니다", dto.getUserIdx());
+            return new BaseResponse<>(e);
+        }
+    }
+
     @PatchMapping("/deactivation")
     public BaseResponse deactivateAccount(@RequestHeader("Authorization") String token, @RequestBody AccountDeletionRequestDTO dto) {
         try {
@@ -78,5 +92,4 @@ public class UserController {
             return new BaseResponse<>(e);
         }
     }
-
 }

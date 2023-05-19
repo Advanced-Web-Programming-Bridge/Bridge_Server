@@ -32,15 +32,16 @@ public enum BaseErrorCode {
     EXIST_ID(1502, "이미 존재하는 아이디 입니다."),
 
     // Password
-    PW_TOO_SHORT(1503, "비밀번호가 너무 짧습니다."),
-    PW_TOO_LONG(1504, "비밀번호가 너무 깁니다."),
-    INVALID_PW(1505, "비밀번호가 일치 하지 않습니다."),
+    PW_TOO_SHORT(1600, "비밀번호가 너무 짧습니다."),
+    PW_TOO_LONG(1601, "비밀번호가 너무 깁니다."),
+    INVALID_PW(1602, "비밀번호가 일치 하지 않습니다."),
 
     // User
-    INVALID_USER(1506, "존재하지 않는 회원입니다."),
+    INVALID_USER(1700, "존재하지 않는 회원입니다."),
+    INVALID_INFORMATION(1701, "올바르지 않은 정보입니다."),
 
     // Email
-    INVALID_EMAIL(1507, "유효하지 않는 이메일입니다."),
+    INVALID_EMAIL(1800, "유효하지 않는 이메일입니다."),
 
     /**
      * 9000 Database Error

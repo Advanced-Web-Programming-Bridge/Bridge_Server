@@ -35,15 +35,15 @@ public class UserService {
     }
 
     /**
-     * 해당 id를 가진 User 정보 가져오기
+     * 식별자를 통해 사용자의 정보 가져오기
      *
-     * @param id: user index
-     * @return user : 해당 id를 가진 User
+     * @param userIdx 사용자의 식별자
+     * @return 해당 식별자를 가진 사용자
      * @throws BaseException
      */
-    public User getUser(UUID id) throws BaseException {
+    public User getUser(UUID userIdx) throws BaseException {
         try {
-            User user = userRepository.findById(id)
+            User user = userRepository.findById(userIdx)
                     .orElseThrow(() -> new BaseException(INVALID_USER));
 
             // 회원 탈퇴를 한 적이 있는지 확인
@@ -60,8 +60,8 @@ public class UserService {
     /***
      * 로그인
      *
-     * @param dto : user id, pw가 들어있는 dto
-     * @return user index, token(access token, refresh token)이 들어있는 dto
+     * @param dto 사용자의 아이디, 비밀번호가 들어있는 dto
+     * @return 사용자의 식별자, token(access token, refresh token)이 들어있는 dto
      * @throws BaseException
      */
     public LoginResponseDto signIn(LoginRequestDto dto) throws BaseException {
@@ -115,8 +115,8 @@ public class UserService {
     /***
      *  회원 가입
      *
-     * @param dto : user id, pw, email이 들어있는 dto
-     * @return user index와 정상적으로 회원 가입이 되었다는 문구가 들어있는 dto
+     * @param dto 사용자의 아이디, 비밀번호, 이메일이 들어있는 dto
+     * @return 사용자의 식별자와 정상적으로 회원 가입이 되었다는 문구가 들어있는 dto
      * @throws BaseException
      */
     public SignUpResponseDto join(SignUpRequestDto dto) throws BaseException {
@@ -143,25 +143,63 @@ public class UserService {
         }
     }
 
-    // Todo: 비밀번호 변경
+    /***
+     * 비밀번호 변경
+     *
+     * @param token 사용자의 access token
+     * @param dto 사용자의 식별자, 현재 비밀번호, 바꾸고 싶은 비밀번호가 들어있는 dto
+     * @return 사용자의 식별자, 비밀번호 변경 시간이 들어있는 dto
+     * @throws BaseException
+     */
+    public ChangePasswordResponseDto changePassword(String token, ChangePasswordRequestDto dto) throws BaseException {
+        try {
+            // 받은 사용자의 식별자를 통해 사용자가 있는지 확인
+            User user = userRepository.findById(dto.getUserIdx())
+                    .orElseThrow(() -> new BaseException(INVALID_USER));
+
+            // 회원 탈퇴를 한 적이 있는지 확인
+            if (user.getExpired()) throw new BaseException(INVALID_USER);
+
+            // 토큰 안에 있는 user 정보와 dto안에 있는 user 정보가 일치하는지 확인
+            if (!jwtTokenProvider.getUserIdx(token.split(" ")[1]).equals(dto.getUserIdx()))
+                throw new BaseException(INVALID_INFORMATION);
+
+            // 올바른 비밀번호인지 확인
+            if (!aes256Util.decrypt(user.getPw()).equals(dto.getCurrentPw()))
+                throw new BaseException(INVALID_PW);
+
+            // 암호화된 비밀번호 저장
+            user.setPw(aes256Util.encrypt(dto.getNewPw()));
+            user.setUpdatedAt(new Date());
+
+            return new ChangePasswordResponseDto(user.getUserIdx());
+
+        } catch (BaseException e) {
+            log.error(e.getErrorCode().getMessage());
+            throw e;
+        }
+    }
 
     /***
      * 회원 탈퇴
      *
      * @param token : 사용자의 access token
-     * @param dto : 사용자의 id와 pw가 들어있는 dto
+     * @param dto : 사용자의 식별자, 비밀번호가 들어있는 dto
      * @return 정상적으로 탈퇴가 되었다는 문구가 들어있는 dto
      * @throws BaseException
      */
     public AccountDeletionResponseDTO deactivateAccount(String token, AccountDeletionRequestDTO dto) throws BaseException {
         try {
-            // 토큰이 발행되었다는 것은 존재하는 유저
+            // 받은 사용자의 식별자를 통해 사용자가 있는지 확인
             User user = userRepository.findById(dto.getUserIdx())
                     .orElseThrow(() -> new BaseException(INVALID_USER));
 
+            // 회원 탈퇴를 한 적이 있는지 확인
+            if (user.getExpired()) throw new BaseException(INVALID_USER);
+
             // 토큰 안에 있는 user 정보와 dto안에 있는 user 정보가 일치하는지 확인
             if (!jwtTokenProvider.getUserIdx(token.split(" ")[1]).equals(dto.getUserIdx()))
-                throw new BaseException(INVALID_USER);
+                throw new BaseException(INVALID_INFORMATION);
 
             // 올바른 비밀번호인지 확인
             if (!aes256Util.decrypt(user.getPw()).equals(dto.getPw()))
