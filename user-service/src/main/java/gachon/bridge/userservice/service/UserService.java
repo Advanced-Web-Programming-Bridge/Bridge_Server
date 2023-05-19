@@ -1,5 +1,6 @@
 package gachon.bridge.userservice.service;
 
+import gachon.bridge.userservice.base.BaseErrorCode;
 import gachon.bridge.userservice.base.BaseException;
 import gachon.bridge.userservice.domain.User;
 import gachon.bridge.userservice.dto.*;
@@ -7,47 +8,36 @@ import gachon.bridge.userservice.repository.UserRepository;
 import gachon.bridge.userservice.utils.AES256Util;
 import gachon.bridge.userservice.utils.JwtTokenProvider;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.UUID;
 
-import static gachon.bridge.userservice.base.BaseErrorCode.*;
-
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final AES256Util aes256Util;
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
-
-    @Autowired
-    public UserService(UserRepository userRepository, JwtTokenProvider jwtTokenProvider, AES256Util aes256Util) {
-        this.userRepository = userRepository;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.aes256Util = aes256Util;
-    }
+    private final Logger log = LoggerFactory.getLogger(UserService.class);
 
     /**
      * 식별자를 통해 사용자의 정보 가져오기
      *
      * @param userIdx 사용자의 식별자
      * @return 해당 식별자를 가진 사용자
-     * @throws BaseException
+     * @throws BaseException 사용자가 존재하지 않거나 회원 탈퇴한 경우
      */
     public User getUser(UUID userIdx) throws BaseException {
         try {
-            User user = userRepository.findById(userIdx)
-                    .orElseThrow(() -> new BaseException(INVALID_USER));
-
-            // 회원 탈퇴를 한 적이 있는지 확인
-            if (user.getExpired()) throw new BaseException(INVALID_USER);
+            User user = getUserById(userIdx);
+            checkUserExpired(user);
 
             return user;
 
@@ -61,50 +51,22 @@ public class UserService {
      * 로그인
      *
      * @param dto 사용자의 아이디, 비밀번호가 들어있는 dto
-     * @return 사용자의 식별자, token(access token, refresh token)이 들어있는 dto
-     * @throws BaseException
+     * @return 사용자의 식별자, token(access token, refresh token), 로그인 성공 시간이 들어있는 dto
+     * @throws BaseException 유효하지 않은 사용자, 비밀번호 불일치의 경우
      */
     public LoginResponseDto signIn(LoginRequestDto dto) throws BaseException {
         try {
             User user = userRepository.findByUserId(dto.getId())
-                    .orElseThrow(() -> new BaseException(INVALID_USER));
+                    .orElseThrow(() -> new BaseException(BaseErrorCode.INVALID_USER));
 
-            // 회원 탈퇴를 한 적이 있는지 확인
-            if (user.getExpired()) throw new BaseException(INVALID_USER);
-
-            // DB에 저장된 비밀번호와 일치하는지 확인
-            if (!aes256Util.decrypt(user.getPw()).equals(dto.getPw()))
-                throw new BaseException(INVALID_PW);
+            checkUserExpired(user);
+            checkPassword(user, dto.getPw());
 
             // Access token 발급
             String accessToken = jwtTokenProvider.createAccessToken(user.getUserIdx());
-            log.info("{}의 아이디를 가진 유저에게 '{}' access token을 발급하였습니다", user.getUserId(), accessToken);
+            log.info("User with ID '{}' has been issued an access token '{}'.", user.getUserId(), accessToken);
 
-            String refreshToken;
-
-            if (user.getToken() == null) { // Refresh token이 없는 경우
-                // Refresh token 발급 및 DB에 설정
-                refreshToken = jwtTokenProvider.createRefreshToken(user.getUserIdx());
-                user.setToken(refreshToken);
-                user.setUpdatedAt(new Date());
-
-                log.info("{}의 아이디를 가진 유저에게 '{}' refresh token을 발급하였습니다", user.getUserId(), refreshToken);
-
-            } else { // Refresh token이 있는 경우
-                refreshToken = user.getToken();
-
-                if (jwtTokenProvider.expired(refreshToken)) { // DB에 저장된 refresh token이 만료된 경우
-                    // Refresh token 재발급
-                    String newRefreshToken = jwtTokenProvider.createRefreshToken(user.getUserIdx());
-                    log.info("{}의 아이디를 가진 유저에게 '{}' refresh token을 재발급하였습니다", user.getUserId(), refreshToken);
-
-                    // DB에 설정
-                    user.setToken(newRefreshToken);
-                    user.setUpdatedAt(new Date());
-                }
-            }
-
-            return new LoginResponseDto(user.getUserIdx(), new Token(accessToken, refreshToken));
+            return new LoginResponseDto(user.getUserIdx(), new Token(accessToken, getRefreshToken(user)));
 
         } catch (BaseException e) {
             log.error(e.getErrorCode().getMessage());
@@ -116,18 +78,16 @@ public class UserService {
      *  회원 가입
      *
      * @param dto 사용자의 아이디, 비밀번호, 이메일이 들어있는 dto
-     * @return 사용자의 식별자와 정상적으로 회원 가입이 되었다는 문구가 들어있는 dto
-     * @throws BaseException
+     * @return 사용자의 식별자와 회원 가입 성공 시간이 들어있는 dto
+     * @throws BaseException ID의 길이가 0자이거나 45자를 넘어가는 경우, 이미 존재하는 아이디의 경우
      */
     public SignUpResponseDto join(SignUpRequestDto dto) throws BaseException {
         try {
-            // id 길이 확인 (0 < id.length() <= 45)
-            if (dto.getId().length() == 0) throw new BaseException(ID_TOO_SHORT);
-            if (dto.getId().length() > 45) throw new BaseException(ID_TOO_LONG);
+            verifyIdLength(dto.getId());
 
             // id 중복 확인
             if (userRepository.findByUserId(dto.getId()).isPresent())
-                throw new BaseException(EXIST_ID);
+                throw new BaseException(BaseErrorCode.EXIST_ID);
 
             // Todo: 유효한 이메일인지 확인
 
@@ -147,35 +107,22 @@ public class UserService {
      * 비밀번호 변경
      *
      * @param token 사용자의 access token
-     * @param dto 사용자의 식별자, 현재 비밀번호, 바꾸고 싶은 비밀번호가 들어있는 dto
+     * @param dto   사용자의 식별자, 현재 비밀번호, 바꾸고 싶은 비밀번호가 들어있는 dto
      * @return 사용자의 식별자, 비밀번호 변경 시간이 들어있는 dto
-     * @throws BaseException
+     * @throws BaseException 유효하지 않은 사용자, 토큰과 사용자 정보가 일치하지 않은 경우, 비밀번호 불일치의 경우
      */
     public ChangePasswordResponseDto changePassword(String token, ChangePasswordRequestDto dto) throws BaseException {
         try {
-            // 식별자 타입 변환
             UUID userIdx = UUID.fromString(dto.getUserIdx());
+            User user = getUser(userIdx);
 
-            // 받은 사용자의 식별자를 통해 사용자가 있는지 확인
-            User user = userRepository.findById(userIdx)
-                    .orElseThrow(() -> new BaseException(INVALID_USER));
+            checkAuthentication(token, user, dto.getCurrentPw());
 
-            // 회원 탈퇴를 한 적이 있는지 확인
-            if (user.getExpired()) throw new BaseException(INVALID_USER);
-
-            // 토큰 안에 있는 user 정보와 dto안에 있는 user 정보가 일치하는지 확인
-            if (!jwtTokenProvider.getUserIdx(token.split(" ")[1]).equals(userIdx))
-                throw new BaseException(INVALID_INFORMATION);
-
-            // 올바른 비밀번호인지 확인
-            if (!aes256Util.decrypt(user.getPw()).equals(dto.getCurrentPw()))
-                throw new BaseException(INVALID_PW);
-
-            // 암호화된 비밀번호 저장
+            // 비밀번호 저장
             user.setPw(aes256Util.encrypt(dto.getNewPw()));
             user.setUpdatedAt(new Date());
 
-            return new ChangePasswordResponseDto(user.getUserIdx());
+            return new ChangePasswordResponseDto(userIdx);
 
         } catch (BaseException e) {
             log.error(e.getErrorCode().getMessage());
@@ -186,30 +133,17 @@ public class UserService {
     /***
      * 회원 탈퇴
      *
-     * @param token : 사용자의 access token
-     * @param dto : 사용자의 식별자, 비밀번호가 들어있는 dto
+     * @param token 사용자의 access token
+     * @param dto   사용자의 식별자, 비밀번호가 들어있는 dto
      * @return 정상적으로 탈퇴가 되었다는 문구가 들어있는 dto
-     * @throws BaseException
+     * @throws BaseException 유효하지 않은 사용자, 토큰과 사용자 정보가 일치하지 않은 경우, 비밀번호 불일치의 경우
      */
-    public AccountDeletionResponseDTO deactivateAccount(String token, AccountDeletionRequestDTO dto) throws BaseException {
+    public AccountDeletionResponseDTO leave(String token, AccountDeletionRequestDTO dto) throws BaseException {
         try {
-            // 식별자 타입 변환
             UUID userIdx = UUID.fromString(dto.getUserIdx());
+            User user = getUser(userIdx);
 
-            // 받은 사용자의 식별자를 통해 사용자가 있는지 확인
-            User user = userRepository.findById(userIdx)
-                    .orElseThrow(() -> new BaseException(INVALID_USER));
-
-            // 회원 탈퇴를 한 적이 있는지 확인
-            if (user.getExpired()) throw new BaseException(INVALID_USER);
-
-            // 토큰 안에 있는 user 정보와 dto안에 있는 user 정보가 일치하는지 확인
-            if (!jwtTokenProvider.getUserIdx(token.split(" ")[1]).equals(userIdx))
-                throw new BaseException(INVALID_INFORMATION);
-
-            // 올바른 비밀번호인지 확인
-            if (!aes256Util.decrypt(user.getPw()).equals(dto.getPw()))
-                throw new BaseException(INVALID_PW);
+            checkAuthentication(token, user, dto.getPw());
 
             // 회원 탈퇴
             user.setExpired(true);
@@ -220,6 +154,93 @@ public class UserService {
         } catch (BaseException e) {
             log.error(e.getErrorCode().getMessage());
             throw e;
+        }
+    }
+
+    /**
+     * 사용자 식별자를 통해 사용자 가져오기
+     *
+     * @param userId 사용자 아이디
+     * @return 해당 아이디를 가진 사용자
+     * @throws BaseException 사용자의 식별자를 통해 사용자를 조회할 수 없는 경우
+     */
+    private User getUserById(UUID userId) throws BaseException {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new BaseException(BaseErrorCode.INVALID_USER));
+    }
+
+    /**
+     * 사용자의 회원 탈퇴 여부 확인.
+     *
+     * @param user 사용자 객체
+     * @throws BaseException 회원 탈퇴를 한 경우 발생하는 예외
+     */
+    private void checkUserExpired(User user) throws BaseException {
+        if (user.getExpired())
+            throw new BaseException(BaseErrorCode.INVALID_USER);
+    }
+
+    /**
+     * Refresh token 가져오기
+     *
+     * @param user 사용자
+     * @return Refresh token
+     */
+    private String getRefreshToken(User user) {
+        String refreshToken = user.getToken();
+
+        if (refreshToken == null || jwtTokenProvider.expired(refreshToken)) {
+            refreshToken = jwtTokenProvider.createRefreshToken(user.getUserIdx());
+
+            log.info("User with ID '{}' has been issued an refresh token '{}'.", user.getUserId(), refreshToken);
+
+            user.setToken(refreshToken);
+            user.setUpdatedAt(new Date());
+        }
+
+        return refreshToken;
+    }
+
+    /**
+     * 사용자 아이디의 유효성 검사
+     *
+     * @param userId 사용자 아이디
+     * @throws BaseException 아이디의 길이가 0자이거나 45자를 넘어가는 경우
+     */
+    private void verifyIdLength(String userId) throws BaseException {
+        if (userId.length() == 0)
+            throw new BaseException(BaseErrorCode.ID_TOO_SHORT);
+
+        if (userId.length() > 45)
+            throw new BaseException(BaseErrorCode.ID_TOO_LONG);
+    }
+
+    /**
+     * 토큰과 사용자 정보의 유효성 검사
+     *
+     * @param token    사용자의 (access) token
+     * @param user     사용자 정보
+     * @param password 비밀번호
+     * @throws BaseException 토큰과 사용자 정보가 일치하지 않거나 비밀번호가 일치하지 않는 경우
+     */
+    private void checkAuthentication(String token, User user, String password) throws BaseException {
+        if (!jwtTokenProvider.getUserIdx(token.split(" ")[1]).equals(user.getUserIdx()))
+            throw new BaseException(BaseErrorCode.INVALID_INFORMATION);
+
+        checkPassword(user, password);
+    }
+
+    /**
+     * 주어진 비밀번호가 사용자의 실제 비밀번호와 일치하는지 확인
+     *
+     * @param user     사용자 정보
+     * @param password 비밀번호
+     * @throws BaseException 비밀번호가 일치하지 않는 경우
+     */
+    private void checkPassword(User user, String password) throws BaseException {
+        String decryptedPassword = aes256Util.decrypt(user.getPw());
+        if (!decryptedPassword.equals(password)) {
+            throw new BaseException(BaseErrorCode.INVALID_PW);
         }
     }
 

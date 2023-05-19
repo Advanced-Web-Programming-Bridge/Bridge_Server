@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.UUID;
-
 import static gachon.bridge.userservice.base.BaseErrorCode.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -62,7 +60,7 @@ class UserServiceAccountDeletionTests {
 
         // when : 회원 탈퇴를 하면
         try {
-            userService.deactivateAccount(token, dto);
+            userService.leave(token, dto);
         } catch (Exception e) {
             e.printStackTrace();
             fail("회원 탈퇴 실패");
@@ -108,7 +106,7 @@ class UserServiceAccountDeletionTests {
         // when : 회원 탈퇴할 때
         // then : 존재하지 않는 회원 예외가 터져야 한다.
         try {
-            userService.deactivateAccount(token, dto);
+            userService.leave(token, dto);
         } catch (BaseException e) {
             assertEquals(INVALID_USER, e.getErrorCode());
             return;
@@ -146,7 +144,7 @@ class UserServiceAccountDeletionTests {
         // when : 회원 탈퇴할 때
         // then : 존재하지 않는 회원 예외가 터져야 한다.
         try {
-            userService.deactivateAccount(token, dto);
+            userService.leave(token, dto);
         } catch (BaseException e) {
             assertEquals(INVALID_USER, e.getErrorCode());
             return;
@@ -186,7 +184,7 @@ class UserServiceAccountDeletionTests {
         // when : 회원 탈퇴를 하면
         // then : 올바르지 않은 정보 예외가 터지며 회원 탈퇴가 되면 안 된다
         try {
-            userService.deactivateAccount(token, dto);
+            userService.leave(token, dto);
         } catch (BaseException e) {
             assertEquals(INVALID_INFORMATION, e.getErrorCode());
             return;
@@ -222,7 +220,7 @@ class UserServiceAccountDeletionTests {
         // when : 회원 탈퇴를 하면
         // then : 회원 탈퇴가 되면 안 된다
         try {
-            userService.deactivateAccount(token, dto);
+            userService.leave(token, dto);
         } catch (BaseException e) {
             assertEquals(INVALID_PW, e.getErrorCode());
             return;

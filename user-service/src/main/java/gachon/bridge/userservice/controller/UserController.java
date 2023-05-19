@@ -95,7 +95,7 @@ public class UserController {
             if (!validUUIDFormat(dto.getUserIdx()))
                 throw new IllegalArgumentException();
 
-            AccountDeletionResponseDTO data = userService.deactivateAccount(token, dto);
+            AccountDeletionResponseDTO data = userService.leave(token, dto);
             log.info("'{}'의 식별자를 가진 유저가 회원 탈퇴에 성공하였습니다", dto.getUserIdx());
 
             return new BaseResponse<>(data);
