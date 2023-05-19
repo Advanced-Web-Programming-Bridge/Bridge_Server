@@ -18,7 +18,7 @@ import static gachon.bridge.userservice.utils.UUIDValidator.validUUIDFormat;
 @RestController
 @RequestMapping("/api/auths")
 public class UserController {
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
 
     @Autowired
@@ -27,7 +27,7 @@ public class UserController {
     }
 
     @GetMapping("/user/{userIdx}")
-    public BaseResponse getUserInfo(@PathVariable UUID userIdx) {
+    public BaseResponse<User> getUserInfo(@PathVariable UUID userIdx) {
         try {
             User data = userService.getUser(userIdx);
             log.info("Found a user with the identifier '{}'", data.getUserId());
@@ -41,7 +41,7 @@ public class UserController {
     }
 
     @PostMapping("/join")
-    public BaseResponse join(@RequestBody SignUpRequestDto dto) {
+    public BaseResponse<SignUpResponseDto> join(@RequestBody SignUpRequestDto dto) {
         try {
             SignUpResponseDto data = userService.join(dto);
             log.info("User with the identifier '{}' has been successfully registered.", dto.getId());
@@ -55,7 +55,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public BaseResponse signIn(@RequestBody LoginRequestDto dto) {
+    public BaseResponse<LoginResponseDto> signIn(@RequestBody LoginRequestDto dto) {
         try {
             LoginResponseDto data = userService.signIn(dto);
             log.info("User with the ID '{}' has successfully logged in.", dto.getId());
@@ -69,7 +69,7 @@ public class UserController {
     }
 
     @PatchMapping("/change/pw")
-    public BaseResponse changePassword(@RequestHeader("Authorization") String token, @RequestBody ChangePasswordRequestDto dto) {
+    public BaseResponse<ChangePasswordResponseDto> changePassword(@RequestHeader("Authorization") String token, @RequestBody ChangePasswordRequestDto dto) {
         try {
             if (!validUUIDFormat(dto.getUserIdx()))
                 throw new IllegalArgumentException();
@@ -90,7 +90,7 @@ public class UserController {
     }
 
     @PatchMapping("/deactivation")
-    public BaseResponse deactivateAccount(@RequestHeader("Authorization") String token, @RequestBody AccountDeletionRequestDTO dto) {
+    public BaseResponse<AccountDeletionResponseDTO> deactivateAccount(@RequestHeader("Authorization") String token, @RequestBody AccountDeletionRequestDTO dto) {
         try {
             if (!validUUIDFormat(dto.getUserIdx()))
                 throw new IllegalArgumentException();
