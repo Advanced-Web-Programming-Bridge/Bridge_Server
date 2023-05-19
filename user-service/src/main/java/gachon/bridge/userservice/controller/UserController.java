@@ -30,12 +30,12 @@ public class UserController {
     public BaseResponse getUserInfo(@PathVariable UUID userIdx) {
         try {
             User data = userService.getUser(userIdx);
-            log.info("{}의 아이디를 가진 유저를 찾았습니다", data.getUserId());
+            log.info("Found a user with the identifier '{}'", data.getUserId());
 
             return new BaseResponse<>(data);
 
         } catch (BaseException e) {
-            log.error("{}의 user index를 가진 유저를 찾는 데 실패하였습니다", userIdx);
+            log.error("Failed to find a user with the identifier '{}'", userIdx);
             return new BaseResponse<>(e);
         }
     }
@@ -44,12 +44,12 @@ public class UserController {
     public BaseResponse join(@RequestBody SignUpRequestDto dto) {
         try {
             SignUpResponseDto data = userService.join(dto);
-            log.info("사용자 '{}'가 성공적으로 가입되었습니다.", dto.getId());
+            log.info("User with the identifier '{}' has been successfully registered.", dto.getId());
 
             return new BaseResponse<>(data);
 
         } catch (BaseException e) {
-            log.error("'{}'의 이메일을 가진 유저가 회원 가입 하는 데 실패하였습니다.", dto.getEmail());
+            log.error("Failed to register a user with the email '{}'.", dto.getEmail());
             return new BaseResponse<>(e);
         }
     }
@@ -58,12 +58,12 @@ public class UserController {
     public BaseResponse signIn(@RequestBody LoginRequestDto dto) {
         try {
             LoginResponseDto data = userService.signIn(dto);
-            log.info("{}의 아이디를 가진 유저가 로그인에 성공하였습니다", dto.getId());
+            log.info("User with the ID '{}' has successfully logged in.", dto.getId());
 
             return new BaseResponse<>(data);
 
         } catch (BaseException e) {
-            log.error("{}의 아이디를 가진 유저가 로그인 하는 데 실패하였습니다", dto.getId());
+            log.error("Failed to log in for the user with the ID '{}'.", dto.getId());
             return new BaseResponse<>(e);
         }
     }
@@ -75,7 +75,7 @@ public class UserController {
                 throw new IllegalArgumentException();
 
             ChangePasswordResponseDto data = userService.changePassword(token, dto);
-            log.info("'{}'의 식별자를 가진 유저가 비밀번호를 변경 하는 데 성공하였습니다", dto.getUserIdx());
+            log.info("User with the identifier '{}' has successfully changed the password.", dto.getUserIdx());
 
             return new BaseResponse<>(data);
 
@@ -84,7 +84,7 @@ public class UserController {
             return new BaseResponse<>(new BaseException(INVALID_UUID_FORMAT));
 
         } catch (BaseException e) {
-            log.error("'{}'의 식별자를 가진 유저가 비밀번호를 변경 하는 데 실패하였습니다", dto.getUserIdx());
+            log.error("Failed to change the password for the user with the identifier '{}'.", dto.getUserIdx());
             return new BaseResponse<>(e);
         }
     }
@@ -96,7 +96,7 @@ public class UserController {
                 throw new IllegalArgumentException();
 
             AccountDeletionResponseDTO data = userService.leave(token, dto);
-            log.info("'{}'의 식별자를 가진 유저가 회원 탈퇴에 성공하였습니다", dto.getUserIdx());
+            log.info("User with the identifier '{}' has successfully withdrawn from membership.", dto.getUserIdx());
 
             return new BaseResponse<>(data);
 
@@ -105,7 +105,7 @@ public class UserController {
             return new BaseResponse<>(new BaseException(INVALID_UUID_FORMAT));
 
         } catch (BaseException e) {
-            log.error("'{}'의 식별자를 가진 유저가 회원 탈퇴 하는 데 실패하였습니다", dto.getUserIdx());
+            log.error("Failed to withdraw the user with the identifier '{}'.", dto.getUserIdx());
             return new BaseResponse<>(e);
         }
     }
