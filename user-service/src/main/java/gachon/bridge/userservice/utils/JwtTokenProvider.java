@@ -25,7 +25,7 @@ public class JwtTokenProvider {
     }
 
     public String createAccessToken(UUID userIdx) {
-        return createJwtToken(userIdx, 1000L * 60 * 5); // 5분
+        return createJwtToken(userIdx, 1000L * 60 * 60 * 24); // 1일
     }
 
     private String createJwtToken(UUID userIdx, Long time) {
