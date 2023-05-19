@@ -89,7 +89,7 @@ public class UserController {
         }
     }
 
-    @PatchMapping("/deactivation")
+    @PatchMapping("/leave")
     public BaseResponse<AccountDeletionResponseDTO> deactivateAccount(@RequestHeader("Authorization") String token, @RequestBody AccountDeletionRequestDTO dto) {
         try {
             if (!validUUIDFormat(dto.getUserIdx()))
