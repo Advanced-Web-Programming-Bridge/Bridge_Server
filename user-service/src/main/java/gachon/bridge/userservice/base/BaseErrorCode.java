@@ -13,6 +13,7 @@ public enum BaseErrorCode {
 
     PW_TOO_SHORT(400, "비밀번호가 너무 짧습니다."),
     PW_TOO_LONG(400, "비밀번호가 너무 깁니다."),
+    SAME_PW(400, "이전 비밀번호와 같습니다."),
     INVALID_PW(400, "비밀번호가 일치 하지 않습니다."),
     INVALID_INFORMATION(400, "올바르지 않은 정보입니다."),
     INVALID_EMAIL(400, "유효하지 않는 이메일입니다."),
