@@ -58,7 +58,7 @@ class UserServiceAccountDeletionTests {
             fail("로그인 실패");
         }
 
-        AccountDeletionRequestDTO dto = new AccountDeletionRequestDTO(user.getUserIdx(), pw);
+        AccountDeletionRequestDTO dto = new AccountDeletionRequestDTO(user.getUserIdx().toString(), pw);
 
         // when : 회원 탈퇴를 하면
         try {
@@ -101,7 +101,7 @@ class UserServiceAccountDeletionTests {
             fail("로그인 실패");
         }
 
-        AccountDeletionRequestDTO dto = new AccountDeletionRequestDTO(user.getUserIdx(), "invalid_pw");
+        AccountDeletionRequestDTO dto = new AccountDeletionRequestDTO(user.getUserIdx().toString(), "invalid_pw");
 
         userRepository.delete(user); // 토큰 발급 후 user 삭제 -> 존재하지 않는 회원으로 만들어버림
 
@@ -139,7 +139,7 @@ class UserServiceAccountDeletionTests {
             fail("로그인 실패");
         }
 
-        AccountDeletionRequestDTO dto = new AccountDeletionRequestDTO(user.getUserIdx(), "invalid_pw");
+        AccountDeletionRequestDTO dto = new AccountDeletionRequestDTO(user.getUserIdx().toString(), "invalid_pw");
 
         user.setExpired(true);
 
@@ -181,7 +181,7 @@ class UserServiceAccountDeletionTests {
             fail("로그인 실패");
         }
 
-        AccountDeletionRequestDTO dto = new AccountDeletionRequestDTO(anotherUser.getUserIdx(), anotherUser.getPw());
+        AccountDeletionRequestDTO dto = new AccountDeletionRequestDTO(anotherUser.getUserIdx().toString(), anotherUser.getPw());
 
         // when : 회원 탈퇴를 하면
         // then : 올바르지 않은 정보 예외가 터지며 회원 탈퇴가 되면 안 된다
@@ -217,7 +217,7 @@ class UserServiceAccountDeletionTests {
             fail("로그인 실패");
         }
 
-        AccountDeletionRequestDTO dto = new AccountDeletionRequestDTO(user.getUserIdx(), "invalid_pw");
+        AccountDeletionRequestDTO dto = new AccountDeletionRequestDTO(user.getUserIdx().toString(), "invalid_pw");
 
         // when : 회원 탈퇴를 하면
         // then : 회원 탈퇴가 되면 안 된다

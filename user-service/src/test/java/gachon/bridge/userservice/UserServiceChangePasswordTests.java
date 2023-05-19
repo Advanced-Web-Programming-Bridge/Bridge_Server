@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.UUID;
-
 import static gachon.bridge.userservice.base.BaseErrorCode.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -59,7 +57,7 @@ class UserServiceChangePasswordTests {
         }
 
         String newPw = "new_password";
-        ChangePasswordRequestDto dto = new ChangePasswordRequestDto(user.getUserIdx(), pw, newPw);
+        ChangePasswordRequestDto dto = new ChangePasswordRequestDto(user.getUserIdx().toString(), pw, newPw);
 
         // when : 비밀번호 변경 요청을 하면
         try {
@@ -99,7 +97,7 @@ class UserServiceChangePasswordTests {
             fail("로그인하는 과정에서 에러가 발생하였습니다.");
         }
 
-        ChangePasswordRequestDto dto = new ChangePasswordRequestDto(user.getUserIdx(), pw, "newPw");
+        ChangePasswordRequestDto dto = new ChangePasswordRequestDto(user.getUserIdx().toString(), pw, "newPw");
 
         userRepository.delete(user); // 토큰 발급 후 user 삭제 -> 존재하지 않는 회원으로 만들어버림
 
@@ -140,7 +138,7 @@ class UserServiceChangePasswordTests {
         user.setExpired(true);
 
         String newPw = "new_password";
-        ChangePasswordRequestDto dto = new ChangePasswordRequestDto(user.getUserIdx(), pw, newPw);
+        ChangePasswordRequestDto dto = new ChangePasswordRequestDto(user.getUserIdx().toString(), pw, newPw);
 
         // when : 비밀번호 변경 요청을 하면
         // then : 존재하지 않는 회원 예외가 발생한다.
@@ -180,7 +178,7 @@ class UserServiceChangePasswordTests {
             fail("로그인하는 과정에서 에러가 발생하였습니다.");
         }
 
-        ChangePasswordRequestDto dto = new ChangePasswordRequestDto(anotherUser.getUserIdx(), pw, "newPw");
+        ChangePasswordRequestDto dto = new ChangePasswordRequestDto(anotherUser.getUserIdx().toString(), pw, "newPw");
 
         // when : 비밀번호 변경 요청을 하면
         // then : 올바르지 않은 유저 정보 예외가 터져야 한다
@@ -217,7 +215,7 @@ class UserServiceChangePasswordTests {
         }
 
         String newPw = "new_password";
-        ChangePasswordRequestDto dto = new ChangePasswordRequestDto(user.getUserIdx(), newPw, newPw);
+        ChangePasswordRequestDto dto = new ChangePasswordRequestDto(user.getUserIdx().toString(), newPw, newPw);
 
         // when : 비밀번호 변경 요청을 하면
         // then : 올바르지 않은 비밀번호 예외가 발생해야 한다.

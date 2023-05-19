@@ -153,15 +153,18 @@ public class UserService {
      */
     public ChangePasswordResponseDto changePassword(String token, ChangePasswordRequestDto dto) throws BaseException {
         try {
+            // 식별자 타입 변환
+            UUID userIdx = UUID.fromString(dto.getUserIdx());
+
             // 받은 사용자의 식별자를 통해 사용자가 있는지 확인
-            User user = userRepository.findById(dto.getUserIdx())
+            User user = userRepository.findById(userIdx)
                     .orElseThrow(() -> new BaseException(INVALID_USER));
 
             // 회원 탈퇴를 한 적이 있는지 확인
             if (user.getExpired()) throw new BaseException(INVALID_USER);
 
             // 토큰 안에 있는 user 정보와 dto안에 있는 user 정보가 일치하는지 확인
-            if (!jwtTokenProvider.getUserIdx(token.split(" ")[1]).equals(dto.getUserIdx()))
+            if (!jwtTokenProvider.getUserIdx(token.split(" ")[1]).equals(userIdx))
                 throw new BaseException(INVALID_INFORMATION);
 
             // 올바른 비밀번호인지 확인
@@ -190,15 +193,18 @@ public class UserService {
      */
     public AccountDeletionResponseDTO deactivateAccount(String token, AccountDeletionRequestDTO dto) throws BaseException {
         try {
+            // 식별자 타입 변환
+            UUID userIdx = UUID.fromString(dto.getUserIdx());
+
             // 받은 사용자의 식별자를 통해 사용자가 있는지 확인
-            User user = userRepository.findById(dto.getUserIdx())
+            User user = userRepository.findById(userIdx)
                     .orElseThrow(() -> new BaseException(INVALID_USER));
 
             // 회원 탈퇴를 한 적이 있는지 확인
             if (user.getExpired()) throw new BaseException(INVALID_USER);
 
             // 토큰 안에 있는 user 정보와 dto안에 있는 user 정보가 일치하는지 확인
-            if (!jwtTokenProvider.getUserIdx(token.split(" ")[1]).equals(dto.getUserIdx()))
+            if (!jwtTokenProvider.getUserIdx(token.split(" ")[1]).equals(userIdx))
                 throw new BaseException(INVALID_INFORMATION);
 
             // 올바른 비밀번호인지 확인

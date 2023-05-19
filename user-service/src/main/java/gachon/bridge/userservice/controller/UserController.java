@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+import static gachon.bridge.userservice.base.BaseErrorCode.INVALID_UUID_FORMAT;
+import static gachon.bridge.userservice.utils.UUIDValidator.validUUIDFormat;
+
 @RestController
 @RequestMapping("/api/auths")
 public class UserController {
@@ -68,10 +71,17 @@ public class UserController {
     @PatchMapping("/change/pw")
     public BaseResponse changePassword(@RequestHeader("Authorization") String token, @RequestBody ChangePasswordRequestDto dto) {
         try {
+            if (!validUUIDFormat(dto.getUserIdx()))
+                throw new IllegalArgumentException();
+
             ChangePasswordResponseDto data = userService.changePassword(token, dto);
             log.info("'{}'의 식별자를 가진 유저가 비밀번호를 변경 하는 데 성공하였습니다", dto.getUserIdx());
 
             return new BaseResponse<>(data);
+
+        } catch (IllegalArgumentException e) {
+            log.error("Attempted to change password with an invalid identifier: {}", dto.getUserIdx());
+            return new BaseResponse<>(new BaseException(INVALID_UUID_FORMAT));
 
         } catch (BaseException e) {
             log.error("'{}'의 식별자를 가진 유저가 비밀번호를 변경 하는 데 실패하였습니다", dto.getUserIdx());
@@ -82,10 +92,17 @@ public class UserController {
     @PatchMapping("/deactivation")
     public BaseResponse deactivateAccount(@RequestHeader("Authorization") String token, @RequestBody AccountDeletionRequestDTO dto) {
         try {
+            if (!validUUIDFormat(dto.getUserIdx()))
+                throw new IllegalArgumentException();
+
             AccountDeletionResponseDTO data = userService.deactivateAccount(token, dto);
             log.info("'{}'의 식별자를 가진 유저가 회원 탈퇴에 성공하였습니다", dto.getUserIdx());
 
             return new BaseResponse<>(data);
+
+        } catch (IllegalArgumentException e) {
+            log.error("Attempted to perform a member withdrawal with an invalid identifier: {}", dto.getUserIdx());
+            return new BaseResponse<>(new BaseException(INVALID_UUID_FORMAT));
 
         } catch (BaseException e) {
             log.error("'{}'의 식별자를 가진 유저가 회원 탈퇴 하는 데 실패하였습니다", dto.getUserIdx());
