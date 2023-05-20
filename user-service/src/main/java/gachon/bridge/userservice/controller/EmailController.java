@@ -3,6 +3,7 @@ package gachon.bridge.userservice.controller;
 import gachon.bridge.userservice.base.BaseErrorCode;
 import gachon.bridge.userservice.base.BaseException;
 import gachon.bridge.userservice.base.BaseResponse;
+import gachon.bridge.userservice.dto.EmailVerificationResponseDto;
 import gachon.bridge.userservice.dto.SendLinkRequestDTO;
 import gachon.bridge.userservice.dto.SendLinkResponseDTO;
 import gachon.bridge.userservice.service.EmailService;
@@ -35,6 +36,21 @@ public class EmailController {
 
         } catch (BaseException e) {
             log.error("Failed to send link to: {}", dto.getEmailAddress());
+            return new BaseResponse<>(e);
+        }
+    }
+
+    // 이메일 인증
+    @GetMapping("confirm-email")
+    public BaseResponse<EmailVerificationResponseDto> viewConfirmEmail(@RequestParam String token) {
+        try {
+            EmailVerificationResponseDto data = emailService.confirmEmail(token);
+            log.info("Email successfully verified with token: {}", token);
+
+            return new BaseResponse<>(data);
+
+        } catch (BaseException e) {
+            log.error("Failed to verify email with token: {}", token);
             return new BaseResponse<>(e);
         }
     }
