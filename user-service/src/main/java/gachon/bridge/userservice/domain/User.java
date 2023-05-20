@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -27,11 +27,11 @@ public class User {
     @Column(nullable = false, length = 45)
     private String email;
 
-    @Column(nullable = false, columnDefinition = "TIMESTAMP")
-    private Date createdAt;
+    @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP")
+    private LocalDateTime createdAt;
 
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
-    private Date updatedAt;
+    private LocalDateTime updatedAt;
 
     @Column(nullable = false, columnDefinition = "TINYINT(1) DEFAULT 0", name = "status")
     private Boolean expired; // data 삭제 처리 여부
@@ -42,8 +42,8 @@ public class User {
         this.userId = userId;
         this.pw = pw;
         this.email = email;
-        this.createdAt = new Date();
-        this.updatedAt = new Date();
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
         this.expired = false;
     }
 }

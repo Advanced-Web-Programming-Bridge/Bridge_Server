@@ -36,7 +36,8 @@ public enum BaseErrorCode {
     // 500 Internal Server Error
     ENCRYPTION_ERROR(500, "암호화하는 과정에서 에러가 발생하였습니다."),
     DECRYPTION_ERROR(500, "복호화하는 과정에서 에러가 발생하였습니다."),
-    DATABASE_ERROR(500, "Database Error");
+    DATABASE_ERROR(500, "Database Error"),
+    EMAIL_SEND_ERROR(500, "이메일을 보내는 과정에서 에러가 발생하였습니다.");
 
     private final Integer status;
     private final String message;
