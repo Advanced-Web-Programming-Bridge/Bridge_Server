@@ -1,6 +1,8 @@
 package gachon.bridge.mealservice.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
@@ -12,6 +14,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "Meal")
 @DynamicInsert
+@NoArgsConstructor
 public class Meal {
 
     @Id
@@ -26,7 +29,7 @@ public class Meal {
     private Date date;
 
     @Column(name = "goal", nullable = false)
-    @ColumnDefault("0")
+    @ColumnDefault("1")
     private double goal;
 
     @Column(name = "achieved", nullable = false)
@@ -47,6 +50,19 @@ public class Meal {
     @ColumnDefault("true")
     private boolean status;
 
+    @Builder
+    public Meal(UUID userIdx, Date date, double goal, boolean achieved) {
+        this.userIdx = userIdx;
+        this.date = date;
+        this.goal = goal;
+        this.achieved = achieved;
+    }
 
+    public UUID getMealIdx() {
+        return mealIdx;
+    }
 
+    public void updateMealGoal(double targetGoal){
+        this.goal = targetGoal;
+    }
 }

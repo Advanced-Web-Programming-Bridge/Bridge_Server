@@ -21,7 +21,7 @@ public class Calories {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID calorieIdx;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "mealIdx")
     private Meal mealIdx;
 
@@ -51,5 +51,13 @@ public class Calories {
         this.mealIdx = mealIdx;
         this.calories = calories;
         this.time = time;
+    }
+
+    public double getCalories() {
+        return calories;
+    }
+
+    public MealTime getTime() {
+        return time;
     }
 }
