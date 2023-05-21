@@ -20,7 +20,7 @@ public class AuthenticationConfig {
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    @Value("{jwt.secret}")
+    @Value("${jwt.secret}")
     private String secretKey;
 
     @Bean
@@ -32,6 +32,8 @@ public class AuthenticationConfig {
                 .authorizeHttpRequests((authz) -> authz
                         .requestMatchers("/api/auths/login").permitAll()
                         .requestMatchers("/api/auths/join").permitAll()
+                        .requestMatchers("/api/auths/email/send-code").permitAll()
+                        .requestMatchers("/api/auths/email/confirm-email").permitAll()
                         .anyRequest().authenticated()
                 ) // join과 login은 상시 이용 가능
                 .sessionManagement()

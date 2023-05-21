@@ -7,7 +7,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
 
     properties:
       hibernate:
@@ -20,6 +20,22 @@ spring:
     config:
       name: bridge
       profile: server
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: namsh11251@gmail.com
+    password: zfmtzmgkcgoesijt
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+            required: true
+          auth: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
 
 logging.level:
   org.hibernate.SQL: debug

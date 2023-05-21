@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -77,7 +77,7 @@ public class UserService {
     /***
      *  회원 가입
      *
-     * @param dto 사용자의 아이디, 비밀번호, 이메일이 들어있는 dto
+     * @param dto 사용자의 아이디, 비밀번호, (인증된) 이메일이 들어있는 dto
      * @return 사용자의 식별자와 회원 가입 성공 시간이 들어있는 dto
      * @throws BaseException ID의 길이가 0자이거나 45자를 넘어가는 경우, 이미 존재하는 아이디의 경우
      */
@@ -88,8 +88,6 @@ public class UserService {
             // id 중복 확인
             if (userRepository.findByUserId(dto.getId()).isPresent())
                 throw new BaseException(BaseErrorCode.EXIST_ID);
-
-            // Todo: 유효한 이메일인지 확인
 
             // 회원 가입
             User user = new User(dto.getId(), aes256Util.encrypt(dto.getPw()), dto.getEmail());
@@ -124,7 +122,7 @@ public class UserService {
 
             // 비밀번호 저장
             user.setPw(aes256Util.encrypt(dto.getNewPw()));
-            user.setUpdatedAt(new Date());
+            user.setUpdatedAt(LocalDateTime.now());
 
             return new ChangePasswordResponseDto(userIdx);
 
@@ -151,7 +149,7 @@ public class UserService {
 
             // 회원 탈퇴
             user.setExpired(true);
-            user.setUpdatedAt(new Date());
+            user.setUpdatedAt(LocalDateTime.now());
 
             return new AccountDeletionResponseDTO();
 
@@ -199,7 +197,7 @@ public class UserService {
             log.info("User with ID '{}' has been issued an refresh token '{}'.", user.getUserId(), refreshToken);
 
             user.setToken(refreshToken);
-            user.setUpdatedAt(new Date());
+            user.setUpdatedAt(LocalDateTime.now());
         }
 
         return refreshToken;
