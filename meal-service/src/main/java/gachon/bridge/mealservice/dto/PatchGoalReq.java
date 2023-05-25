@@ -10,5 +10,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PatchGoalReq {
+    private String mealIdx;
     private double goal;
 }

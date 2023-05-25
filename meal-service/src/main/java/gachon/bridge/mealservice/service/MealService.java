@@ -30,7 +30,7 @@ public class MealService {
      * String to Date 메서드
      * */
     private Date toDate(String date) throws BaseException {
-        DateFormat df = new SimpleDateFormat("yy-MM-dd");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         Date targetDate;
 
         try{
@@ -56,7 +56,7 @@ public class MealService {
         GetMealCalRes res = new GetMealCalRes();
         double calSum = 0;
 
-        Optional<List<Calories>> calories = caloriesRepository.findAllByMealIdx(meal.get().getMealIdx());
+        Optional<List<Calories>> calories = caloriesRepository.findAllByMealIdx(meal.get());
         calories.orElseThrow(() -> new BaseException(BaseErrorCode.DATABASE_ERROR));
 
         //가져온 대상 Meal 에서 칼로리 가져오기
@@ -161,7 +161,7 @@ public class MealService {
     public PatchGoalRes patchMealGoal(UUID userIdx, String date, PatchGoalReq req) throws BaseException {
         Date targetDate = toDate(date);
 
-        Optional<Meal> meal = mealRepository.findByUserIdxAndDate(userIdx, targetDate);
+        Optional<Meal> meal = mealRepository.findById(UUID.fromString(req.getMealIdx()));
         meal.orElseThrow(() -> new BaseException(BaseErrorCode.NOT_EXIST_MEAL));
 
         meal.get().updateMealGoal(req.getGoal());

@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 public class RegexService {
 
     public static boolean isDate(String date){
-        Pattern pattern = Pattern.compile("^\\d{2}-\\d{2}-\\{2}$");
+        Pattern pattern = Pattern.compile("^\\d{4}-\\d{2}-\\{2}$");
 
         Matcher matcher = pattern.matcher(date);
 

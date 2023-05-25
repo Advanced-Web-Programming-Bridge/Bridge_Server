@@ -10,11 +10,11 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "users")
+@Table(name = "user")
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "userIdx")
     private UUID userIdx;
 
