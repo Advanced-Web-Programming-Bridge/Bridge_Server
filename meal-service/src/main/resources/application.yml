@@ -4,10 +4,11 @@ server:
 spring:
   application:
     name: meal-service
+  security:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
 
     properties:
       hibernate:

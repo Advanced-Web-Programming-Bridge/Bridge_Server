@@ -19,7 +19,8 @@ public enum BaseErrorCode {
     NO_MEAL_EXIST(HttpStatus.NOT_FOUND.value(), "요청한 식단이 존재하지 않습니다."),
 
     //500 Internal Server
-    DATABASE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), "데이터베이스 에러");
+    DATABASE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), "데이터베이스 에러"),
+    FEIGN_CLIENT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Feign Client Error");
     private final Integer status;
     private final String message;
 }

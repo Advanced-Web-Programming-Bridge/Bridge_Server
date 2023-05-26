@@ -34,6 +34,7 @@ public class AuthenticationConfig {
                         .requestMatchers("/api/auths/join").permitAll()
                         .requestMatchers("/api/auths/email/send-code").permitAll()
                         .requestMatchers("/api/auths/email/confirm-email").permitAll()
+                        .requestMatchers("/feign/**").permitAll()
                         .anyRequest().authenticated()
                 ) // join과 login은 상시 이용 가능
                 .sessionManagement()

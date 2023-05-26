@@ -86,8 +86,8 @@ public class UserService {
             verifyIdLength(dto.getId());
 
             // id 중복 확인
-            if (userRepository.findByUserId(dto.getId()).isPresent())
-                throw new BaseException(BaseErrorCode.EXIST_ID);
+//            if (userRepository.findByUserId(dto.getId()).isPresent())
+//                throw new BaseException(BaseErrorCode.EXIST_ID);
 
             // 회원 가입
             User user = new User(dto.getId(), aes256Util.encrypt(dto.getPw()), dto.getEmail());

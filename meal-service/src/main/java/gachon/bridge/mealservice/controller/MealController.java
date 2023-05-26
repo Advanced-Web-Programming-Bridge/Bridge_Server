@@ -39,7 +39,7 @@ public class MealController {
     public BaseResponse<GetMealCalRes> getMealCalories(@RequestHeader(HttpHeaders.AUTHORIZATION) String jwt, @PathVariable("date") String date){
         try{
             if(jwt == null) throw new BaseException(BaseErrorCode.NO_TOKEN);
-            UUID userIdx = mealFeignClient.getUserIdxFromJwt(jwt).getData();
+            UUID userIdx = mealFeignClient.getUserIdxFromJwt(jwt.split(" ")[1]).getData();
 
 
             return new BaseResponse<>(mealService.getMealCalories(userIdx, date));
@@ -57,12 +57,15 @@ public class MealController {
     public BaseResponse<PostMealRes> postMeal(@RequestHeader(HttpHeaders.AUTHORIZATION) String jwt, @RequestBody PostMealReq req, @PathVariable("date") String date){
         try{
             if(jwt == null) throw new BaseException(BaseErrorCode.NO_TOKEN);
-            UUID userIdx = mealFeignClient.getUserIdxFromJwt(jwt).getData();
+            UUID userIdx = mealFeignClient.getUserIdxFromJwt(jwt.split(" ")[1]).getData();
 
             return new BaseResponse<>(mealService.postMeal(userIdx, date, req));
         }catch (BaseException exception){
             log.error(exception.getMessage());
             return new BaseResponse<>(exception);
+        }catch (Exception exception){
+            log.error(exception.getMessage());
+            return new BaseResponse<>(new BaseException(BaseErrorCode.FEIGN_CLIENT_ERROR));
         }
     }
 
@@ -74,12 +77,15 @@ public class MealController {
     public BaseResponse<PatchMealRes> patchMeal(@RequestHeader(HttpHeaders.AUTHORIZATION) String jwt, @RequestBody PatchMealReq req, @PathVariable("date") String date){
         try{
             if(jwt == null) throw new BaseException(BaseErrorCode.NO_TOKEN);
-            UUID userIdx = mealFeignClient.getUserIdxFromJwt(jwt).getData();
+            UUID userIdx = mealFeignClient.getUserIdxFromJwt(jwt.split(" ")[1]).getData();
 
             return new BaseResponse<>(mealService.patchMeal(userIdx, req, date));
         }catch (BaseException exception){
             log.error(exception.getMessage());
             return new BaseResponse<>(exception);
+        }catch (Exception exception){
+            log.error(exception.getMessage());
+            return new BaseResponse<>(new BaseException(BaseErrorCode.FEIGN_CLIENT_ERROR));
         }
     }
     /**
@@ -90,7 +96,7 @@ public class MealController {
     public BaseResponse<PatchGoalRes> patchMealGoal(@RequestHeader(HttpHeaders.AUTHORIZATION) String jwt, @RequestBody PatchGoalReq req, @PathVariable("date") String date){
         try{
             if(jwt == null) throw new BaseException(BaseErrorCode.NO_TOKEN);
-            UUID userIdx = mealFeignClient.getUserIdxFromJwt(jwt).getData();
+            UUID userIdx = mealFeignClient.getUserIdxFromJwt(jwt.split(" ")[1]).getData();
 
             return new BaseResponse<>(mealService.patchMealGoal(userIdx, date, req));
 
@@ -98,6 +104,9 @@ public class MealController {
         }catch (BaseException exception){
             log.error(exception.getMessage());
             return new BaseResponse<>(exception);
+        }catch (Exception exception){
+            log.error(exception.getMessage());
+            return new BaseResponse<>(new BaseException(BaseErrorCode.FEIGN_CLIENT_ERROR));
         }
     }
 }

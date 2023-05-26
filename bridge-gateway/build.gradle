@@ -17,6 +17,7 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-gateway:4.0.3'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.0.0'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'io.netty:netty-resolver-dns-native-macos:4.1.68.Final:osx-aarch_64'
 }
 
 tasks.named('test') {

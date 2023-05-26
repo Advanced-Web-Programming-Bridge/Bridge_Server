@@ -13,5 +13,5 @@ import java.util.UUID;
 public interface CaloriesRepository extends JpaRepository<Calories, UUID> {
     Optional<Calories> searchCaloriesByMealIdxAndStatusIsTrue(UUID mealIdx);
 
-    Optional<List<Calories>> findAllByMealIdx(UUID mealIdx);
+    Optional<List<Calories>> findAllByMealIdx(Meal meal);
 }
