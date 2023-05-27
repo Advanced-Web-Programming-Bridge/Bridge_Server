@@ -22,7 +22,7 @@ public class Calories {
     private UUID calorieIdx;
 
     @ManyToOne
-    @JoinColumn(name = "mealIdx")
+    @JoinColumn(name = "meal_idx")
     private Meal mealIdx;
 
     @Column(name = "calories", nullable = false)
@@ -32,12 +32,12 @@ public class Calories {
     @Enumerated(EnumType.STRING)
     private MealTime time;
 
-    @Column(name = "createdAt", nullable = false)
+    @Column(name = "created_at", nullable = false)
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
-    @Column(name = "updatedAt", nullable = false)
+    @Column(name = "updated_at", nullable = false)
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
