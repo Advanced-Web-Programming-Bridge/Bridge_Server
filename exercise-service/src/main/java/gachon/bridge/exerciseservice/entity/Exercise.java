@@ -5,6 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
@@ -14,6 +15,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+@Getter
 @Entity
 @Table(name = "Exercise")
 @DynamicInsert
@@ -24,7 +26,7 @@ public class Exercise {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID exerciseIdx;
 
-    @Column(name = "userIdx", nullable = false)
+    @Column(name = "user_idx", nullable = false)
     private UUID userIdx;
 
     @Column(name = "exercise_date", nullable = false)
@@ -41,6 +43,7 @@ public class Exercise {
     private int exercise_target_count;
 
     @Column(name = "exercise_did_count", nullable = false)
+    @ColumnDefault("0")
     private int exercise_did_count;
 
     @Column(name = "achieved", nullable = false)
@@ -68,12 +71,15 @@ public class Exercise {
         this.exercise_area = exercise_area;
         this.exercise_name = exercise_name;
         this.exercise_target_count = exercise_target_count;
-        this.exercise_did_count = exercise_did_count;
-        this.achieved = achieved;
     }
 
-    public UUID getExerciseIdx() { return exerciseIdx; }
+    public void updateGoalCount(int goalCount){
+        this.exercise_target_count = goalCount;
+    }
 
+    public void updateDoneCount(int doneCount) {
+        this.exercise_did_count = doneCount;
+    }
     public void updateExerciseGoal(int targetGoal) { this.exercise_target_count =targetGoal; }
 
     public void updateExerciseDone(int done) { this.exercise_did_count = done; }

@@ -4,12 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-@NoArgsConstructor
 @Getter
 @Setter
 @AllArgsConstructor
-public class PostExerciseReq {
+@NoArgsConstructor
+public class PatchTargetCountReq {
     private String userIdx;
-    private ExerciseDto exercise;
+    private String exerciseIdx;
+    private int exerciseTargetCount;
 }

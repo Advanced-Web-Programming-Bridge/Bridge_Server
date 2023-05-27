@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.UUID;
 
-@FeignClient("userservice")
+@FeignClient("user-service")
 public interface ExerciseFeignClient {
 
     @RequestMapping(method = RequestMethod.GET, value = "/feign/user/{userIdx}", consumes = "application/json")

@@ -43,6 +43,14 @@ dependencies {
 	implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
 	runtimeOnly 'mysql:mysql-connector-java:8.0.32'
 	testRuntimeOnly 'com.h2database:h2'
+
+	//security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	// jwt
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 }
 
 dependencyManagement {
