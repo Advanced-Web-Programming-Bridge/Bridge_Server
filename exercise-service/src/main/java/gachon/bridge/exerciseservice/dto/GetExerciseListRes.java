@@ -18,5 +18,4 @@ public class GetExerciseListRes {
     private String exerciseName;
     private int exerciseGoal;
     private  int exerciseDone;
-
 }

@@ -12,6 +12,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 @Entity
 @Table(name = "Exercise")
@@ -60,7 +61,8 @@ public class Exercise {
     @ColumnDefault("true")
     private boolean status;
 
-    @Builder Exercise(UUID userIdx, Date exercise_date, String exercise_area, String exercise_name, int exercise_target_count, int exercise_did_count, boolean achieved) {
+    @Builder
+    public Exercise(UUID userIdx, Date exercise_date, String exercise_area, String exercise_name, int exercise_target_count, int exercise_did_count, boolean achieved) {
         this.userIdx = userIdx;
         this.exercise_date = exercise_date;
         this.exercise_area = exercise_area;

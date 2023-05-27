@@ -13,7 +13,7 @@ public enum BaseErrorCode {
     EXIST_EXERCISE(HttpStatus.BAD_REQUEST.value(), "중복된 운동입니다."),
     BAD_DATE_FORMAT(HttpStatus.BAD_REQUEST.value(), "날짜 형식을 확인해 주세요 yy-MM-dd"),
     NO_TOKEN(HttpStatus.BAD_REQUEST.value(), "jwt 토큰이 없습니다."),
-    NOT_EXIST_EXIST(HttpStatus.BAD_REQUEST.value(), "운동 기록이 존재하지 않습니다."),
+    NOT_EXIST_EXERCISE(HttpStatus.BAD_REQUEST.value(), "운동 기록이 존재하지 않습니다."),
 
 
     //404 not Found

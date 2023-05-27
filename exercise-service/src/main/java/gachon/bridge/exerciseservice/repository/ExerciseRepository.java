@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @Repository
 public interface ExerciseRepository extends JpaRepository <Exercise, UUID> {
-    Optional<Exercise> findAllByUserIdxAndExercise_date(UUID userIdx, Date exercise_date);
+    Optional<List<Exercise>> findAllByUserIdxAndExercise_date(UUID userIdx, Date exercise_date);
 
     boolean existsByUserIdxAndExercise_date(UUID userIdx, Date exercise_date);
 }
