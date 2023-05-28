@@ -3,11 +3,12 @@ package gachon.bridge.exerciseservice.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PatchExerciseTargetCountReq {
-    private int exerciseTargetCount;
+public class ExerciseDto {
+    private String category;
+    private String name;
+    private int goal;
 }

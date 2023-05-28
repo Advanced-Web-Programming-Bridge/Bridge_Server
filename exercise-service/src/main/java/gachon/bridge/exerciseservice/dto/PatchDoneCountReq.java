@@ -9,6 +9,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PatchExerciseDidCountReq {
-    private int exerciseDoneCount;
+public class PatchDoneCountReq {
+    private String userIdx;
+    private String exerciseIdx;
+    private int modifyDoneCount;
 }

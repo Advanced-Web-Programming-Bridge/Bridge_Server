@@ -2,18 +2,18 @@ package gachon.bridge.exerciseservice.dto;
 
 import lombok.*;
 
-import java.util.UUID;
-
-@NoArgsConstructor
 @Getter
 @Setter
-public class PostExerciseRes {
+@NoArgsConstructor
+public class PatchTargetCountRes {
     private String exerciseIdx;
     private String exerciseDate;
+    private int exerciseTargetCount;
 
     @Builder
-    public PostExerciseRes(String exerciseIdx, String exerciseDate) {
+    public PatchTargetCountRes(String exerciseIdx, String exerciseDate, int exerciseTargetCount) {
         this.exerciseIdx = exerciseIdx;
         this.exerciseDate = exerciseDate;
+        this.exerciseTargetCount = exerciseTargetCount;
     }
 }

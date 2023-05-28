@@ -1,18 +1,19 @@
 package gachon.bridge.exerciseservice.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.util.List;
 import java.util.UUID;
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 public class GetExerciseListDoneRes {
-    private UUID exerciseIdx;
     private String exerciseDate;
-    private String exerciseName;
+    private List<ExerciseDoneListDto> exercise;
 
+    @Builder
+    public GetExerciseListDoneRes(String exerciseDate, List<ExerciseDoneListDto> exercise) {
+        this.exerciseDate = exerciseDate;
+        this.exercise = exercise;
+    }
 }

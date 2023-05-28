@@ -21,7 +21,7 @@ public class Meal {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID mealIdx;
 
-    @Column(name = "userIdx", nullable = false)
+    @Column(name = "user_idx", nullable = false)
     private UUID userIdx;
 
     @Column(name = "date", nullable = false)
@@ -36,12 +36,12 @@ public class Meal {
     @ColumnDefault("false")
     private boolean achieved;
 
-    @Column(name = "createdAt", nullable = false)
+    @Column(name = "created_at", nullable = false)
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
-    @Column(name = "updatedAt", nullable = false)
+    @Column(name = "updated_at", nullable = false)
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
