@@ -29,9 +29,9 @@ public class Exercise {
     @Column(name = "user_idx", nullable = false)
     private UUID userIdx;
 
-    @Column(name = "exercise_date", nullable = false)
+    @Column(name = "exerciseDate", nullable = false)
     @Temporal(TemporalType.DATE)
-    private Date exercise_date;
+    private Date exerciseDate;
 
     @Column(name = "exercise_area", nullable = false)
     private String exercise_area;
@@ -50,15 +50,15 @@ public class Exercise {
     @ColumnDefault("false")
     private boolean achieved;
 
-    @Column(name = "createdAt", nullable = false)
+    @Column(name = "created_at", nullable = false)
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+    private Date created_at;
 
-    @Column(name = "updatedAt", nullable = false)
+    @Column(name = "updated_at", nullable = false)
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
+    private Date updated_at;
 
     @Column(name = "status", nullable = false)
     @ColumnDefault("true")
@@ -67,7 +67,7 @@ public class Exercise {
     @Builder
     public Exercise(UUID userIdx, Date exercise_date, String exercise_area, String exercise_name, int exercise_target_count, int exercise_did_count, boolean achieved) {
         this.userIdx = userIdx;
-        this.exercise_date = exercise_date;
+        this.exerciseDate = exercise_date;
         this.exercise_area = exercise_area;
         this.exercise_name = exercise_name;
         this.exercise_target_count = exercise_target_count;

@@ -36,7 +36,7 @@ public class ExerciseController {
             if(jwt == null) throw new BaseException(BaseErrorCode.NO_TOKEN);
             UUID userIdx = exerciseFeignClient.getUserIdxFromJwt(jwt.split(" ")[1]).getData();
 
-            if(userIdx.equals(UUID.fromString(req.getUserIdx()))) throw new BaseException(BaseErrorCode.INVALID_USER_IDX);
+            if(!userIdx.toString().equals(req.getUserIdx())) throw new BaseException(BaseErrorCode.INVALID_USER_IDX);
 
             return new BaseResponse<>(exerciseService.postExercise(req, userIdx, date));
 
@@ -57,7 +57,7 @@ public class ExerciseController {
             if(jwt == null) throw new BaseException(BaseErrorCode.NO_TOKEN);
             UUID userIdx = exerciseFeignClient.getUserIdxFromJwt(jwt.split(" ")[1]).getData();
 
-            if(userIdx.equals(UUID.fromString(req.getUserIdx()))) throw new BaseException(BaseErrorCode.INVALID_USER_IDX);
+            if(!userIdx.toString().equals(req.getUserIdx())) throw new BaseException(BaseErrorCode.INVALID_USER_IDX);
 
             return new BaseResponse<>(exerciseService.patchGoal(req));
 
@@ -77,7 +77,7 @@ public class ExerciseController {
             if(jwt == null) throw new BaseException(BaseErrorCode.NO_TOKEN);
             UUID userIdx = exerciseFeignClient.getUserIdxFromJwt(jwt.split(" ")[1]).getData();
 
-            if(userIdx.equals(UUID.fromString(req.getUserIdx()))) throw new BaseException(BaseErrorCode.INVALID_USER_IDX);
+            if(!userIdx.toString().equals(req.getUserIdx())) throw new BaseException(BaseErrorCode.INVALID_USER_IDX);
 
             return new BaseResponse<>(exerciseService.patchDone(req));
         }catch (BaseException exception){
@@ -96,7 +96,7 @@ public class ExerciseController {
             if(jwt == null) throw new BaseException(BaseErrorCode.NO_TOKEN);
             UUID userIdx = exerciseFeignClient.getUserIdxFromJwt(jwt.split(" ")[1]).getData();
 
-            if(userIdx.equals(UUID.fromString(reqUserIdx))) throw new BaseException(BaseErrorCode.INVALID_USER_IDX);
+            if(!userIdx.toString().equals(reqUserIdx)) throw new BaseException(BaseErrorCode.INVALID_USER_IDX);
 
             return new BaseResponse<>(exerciseService.getDoneList(userIdx, date));
         }catch (BaseException exception){
@@ -109,12 +109,13 @@ public class ExerciseController {
      * 운동 할 리스트 조회
      * [GET] ./api/exercises/{date}?user-idx = ?
      * */
+    @GetMapping("/{date}")
     public BaseResponse<GetExerciseListRes> getExerciseList(@RequestHeader(HttpHeaders.AUTHORIZATION) String jwt, @PathVariable("date") String date, @RequestParam("user-idx") String reqUserIdx) {
         try{
             if(jwt == null) throw new BaseException(BaseErrorCode.NO_TOKEN);
             UUID userIdx = exerciseFeignClient.getUserIdxFromJwt(jwt.split(" ")[1]).getData();
 
-            if(userIdx.equals(UUID.fromString(reqUserIdx))) throw new BaseException(BaseErrorCode.INVALID_USER_IDX);
+            if(!userIdx.toString().equals(reqUserIdx)) throw new BaseException(BaseErrorCode.INVALID_USER_IDX);
 
             return new BaseResponse<>(exerciseService.getExerciseList(userIdx, date));
         }catch (BaseException exception) {

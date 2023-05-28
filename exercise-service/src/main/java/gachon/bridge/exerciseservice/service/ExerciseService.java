@@ -77,7 +77,7 @@ public class ExerciseService {
         return PatchTargetCountRes
                 .builder()
                 .exerciseIdx(entity.getExerciseIdx().toString())
-                .exerciseDate(entity.getExercise_date().toString())
+                .exerciseDate(entity.getExerciseDate().toString())
                 .exerciseTargetCount(entity.getExercise_target_count())
                 .build();
     }
@@ -97,7 +97,7 @@ public class ExerciseService {
         return PatchDoneCountRes
                 .builder()
                 .exerciseIdx(entity.getExerciseIdx().toString())
-                .exerciseDate(entity.getExercise_date().toString())
+                .exerciseDate(entity.getExerciseDate().toString())
                 .exerciseDoneCount(entity.getExercise_did_count())
                 .build();
     }
@@ -107,7 +107,7 @@ public class ExerciseService {
      * */
     public GetExerciseListDoneRes getDoneList(UUID userIdx, String date) throws BaseException {
 
-        Optional<List<Exercise>> optionalList = exerciseRepository.findAllByUserIdxAndExercise_date(userIdx, toDate(date));
+        Optional<List<Exercise>> optionalList = exerciseRepository.findAllByUserIdxAndExerciseDate(userIdx, toDate(date));
         optionalList.orElseThrow(() -> new BaseException(BaseErrorCode.DATABASE_ERROR));
 
         List<Exercise> entityList = optionalList.get();
@@ -143,7 +143,7 @@ public class ExerciseService {
     }
 
     public GetExerciseListRes getExerciseList(UUID userIdx, String date) throws BaseException {
-        Optional<List<Exercise>> optionalList = exerciseRepository.findAllByUserIdxAndExercise_date(userIdx, toDate(date));
+        Optional<List<Exercise>> optionalList = exerciseRepository.findAllByUserIdxAndExerciseDate(userIdx, toDate(date));
         optionalList.orElseThrow(() -> new BaseException(BaseErrorCode.DATABASE_ERROR));
 
         List<Exercise> entityList = optionalList.get();
